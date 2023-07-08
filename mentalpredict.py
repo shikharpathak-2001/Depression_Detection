@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import sns as sns
+import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.impute import SimpleImputer
@@ -72,12 +72,6 @@ plt.xticks(range(1, len(prediction_probabilities) + 1))
 plt.show()
 
 # Make predictions for the user input
-# ... Existing code ...
-
-# Make predictions for the user input
-# ... Existing code ...
-
-# Make predictions for the user input
 prediction = model.predict(user_df_encoded)
 
 # Display the prediction
@@ -86,11 +80,29 @@ if prediction[0] == 1:
 else:
     print("Based on the provided information, you are predicted to not have depression.")
 
-# Ask if the user wants to see the plot
+# Ask if the user wants to see the plots
 show_plot = input("Do you want to see the plots? (Yes/No): ")
 
 if show_plot.lower() == 'yes':
-    # ... Existing plots ...
+    # Plot the count of students with anxiety and depression
+    plt.figure(figsize=(5, 5))
+    sns.countplot(x='Do you have Depression?', data=df)
+    plt.title("Students with Anxiety and Depression")
+    plt.show()
+
+    # Plot the count of students with anxiety by gender
+    plt.figure(figsize=(5, 5))
+    sns.set_theme(style="darkgrid")
+    ax = sns.countplot(y='Do you have Anxiety?', hue='Choose your gender', data=df)
+    plt.title("Anxiety by Gender")
+    plt.show()
+
+    # Plot the count of students with depression by gender
+    plt.figure(figsize=(5, 5))
+    sns.set_theme(style="darkgrid")
+    ax = sns.countplot(y='Do you have Depression?', hue='Choose your gender', data=df)
+    plt.title("Depression by Gender")
+    plt.show()
 
     # Perform predictions on the test set
     y_pred = model.predict(X_test)
@@ -102,14 +114,17 @@ if show_plot.lower() == 'yes':
     # Create a confusion matrix
     confusion_matrix = pd.crosstab(y_test, y_pred, rownames=['Actual'], colnames=['Predicted'])
 
-    # Plot the confusion matrix
+    # Plot the confusion matrix with values
     plt.figure(figsize=(8, 6))
-    plt.imshow(confusion_matrix, interpolation='nearest', cmap='Blues')
+    sns.heatmap(confusion_matrix, annot=True, fmt='d', cmap='Blues')
     plt.title("Confusion Matrix")
-    plt.colorbar()
-    tick_marks = np.arange(len(confusion_matrix.columns))
-    plt.xticks(tick_marks, confusion_matrix.columns)
-    plt.yticks(tick_marks, confusion_matrix.index)
     plt.xlabel('Predicted')
     plt.ylabel('Actual')
     plt.show()
+else:
+    # Perform predictions on the test set
+    y_pred = model.predict(X_test)
+
+    # Calculate the accuracy of the model
+    accuracy = (y_pred == y_test).mean() * 100
+    print("Model Accuracy: {:.2f}%".format(accuracy))
